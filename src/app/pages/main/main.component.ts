@@ -39,12 +39,14 @@ export class MainComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
   }
+
   ngAfterViewInit() {
     this.intersectionObserver = new IntersectionObserver(entries => {
       this.checkForIntersection(entries);
     });
     this.intersectionObserver.observe(this.loadMore.nativeElement);
   }
+
   private checkForIntersection = (entries: Array<IntersectionObserverEntry>) => {
     console.log(entries);
     entries.forEach((entry: IntersectionObserverEntry) => {
