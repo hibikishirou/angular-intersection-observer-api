@@ -1,6 +1,7 @@
 import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { of } from 'rxjs';
+import { AngularWaitBarrier } from 'blocking-proxy/built/lib/angular_wait_barrier';
 
 @Component({
   selector: 'app-canvas-game',
@@ -13,11 +14,23 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
   started = false;
   jumbing = false;
   clicked = false;
+  isOver = false;
+  action: { moving, droping, jump, fall } = {
+    moving: '',
+    droping: '',
+    jump: '',
+    fall: ''
+  };
   w = 1200;
   h = 600;
+  step = 100;
   position = {
     x: 100,
-    y: 449
+    y: 300
+  };
+  begin = {
+    x: 100,
+    y: 300
   };
   constructor() { }
 
@@ -25,65 +38,84 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
     this.getCtx();
-    this.makeLand();
-    this.makeBody(this.position);
     this.run();
   }
   run() {
-    setInterval(() => {
+    this.action.moving = setInterval(() => {
       this.moveFoward();
       this.redraw();
     }, 5);
+    this.action.droping = setInterval(() => {
+      this.moveDown(this.step);
+    }, 500);
   }
   redraw() {
-    // this.clearBody();
     this.makeBody(this.position);
+    // this.makeLand();
   }
-  clearBodyBottom() {
-    this.ctx.clearRect(this.position.x - 50, this.position.y + 2, 100, 50);
-  }
-  clearBodyTop() {
-    this.ctx.clearRect(this.position.x - 52, this.position.y - 2, 100, 150);
-  }
-  clearBodyBehind() {
-    this.ctx.clearRect(this.position.x - 52, this.position.y - 100, 100, 150);
-  }
+
   clearBody() {
     this.ctx.clearRect(0, 0, this.w, this.h);
   }
+  restart() {
+    this.position.x = this.begin.x;
+    this.position.y = this.begin.y;
+    this.clearBody();
+    this.redraw();
+  }
+  over() {
+    clearInterval(this.action.moving);
+    clearInterval(this.action.droping);
+    clearInterval(this.action.fall);
+    clearInterval(this.action.jump);
+    this.isOver = true;
+  }
   moveFoward() {
     this.position.x += 1;
-    this.clearBodyBehind();
-    if (this.position.x === 1200) {
-      this.position.x = 50;
+    this.clearBody();
+    if (this.position.x === this.w) {
+      this.restart();
     }
   }
   moveUp(range) {
-    this.position.y -= 1;
-    this.clearBodyBottom();
-    this.redraw();
-  }
-  moveDown(range) {
-    const down = setInterval(() => {
-      this.position.y += 1;
-      this.clearBodyTop();
+    this.action.jump = setInterval(() => {
+      this.position.y -= 1;
+      this.clearBody();
       this.redraw();
       range -= 1;
       if (!range) {
-        clearInterval();
-        this.jumbing = false;
+        clearInterval(this.action.jump);
       }
     }, 1);
   }
+  moveDown(range) {
+    this.action.fall = setInterval(() => {
+      this.position.y += 1;
+      this.clearBody();
+      this.redraw();
+      range -= 1;
+      if (!range) {
+        clearInterval(this.action.fall);
+      }
+    }, 1);
+    if (this.position.y >= this.h) {
+      this.over();
+    }
+  }
   click(e) {
+    if (this.isOver && this.started) {
+      this.started = false;
+      this.isOver = false;
+      this.restart();
+      return;
+    }
     if (!this.started) {
       this.run();
       this.started = true;
+      this.isOver = false;
       return;
     }
-    if (!this.jumbing) {
-      const up = this.moveUp(50);
-    }
+    this.moveUp(this.step);
   }
   drag(e) {
     // if (this.clicked) {
@@ -98,12 +130,10 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
   makeRect(ctx, position, w, h?) {
     h = h || w;
     ctx.rect(position.x, position.y, w, h);
-    // ctx.strokeStyle = '#FFFFFF';
     ctx.stroke();
   }
   makeCicle(position, radius) {
     this.ctx.arc(position.x, position.y, radius, 0, 2 * Math.PI);
-    // ctx.strokeStyle = '#FFFFFF';
     this.ctx.stroke();
   }
   makeLand() {
