@@ -1,18 +1,30 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MainComponent } from './main/main.component';
-import { Routes, Router, RouterModule } from '@angular/router';
-
+import { Routes, RouterModule } from '@angular/router';
+import { ImageComponent } from './image/image.component';
+import { LazyLoadingComponent } from './lazy-loading/lazy-loading.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
+import { MatSliderModule } from '@angular/material/slider';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CanvasGameComponent } from './canvas-game/canvas-game.component';
 const routes: Routes = [
-  {path: '', component: MainComponent}
+  { path: '', component: MainComponent },
+  { path: 'image', component: ImageComponent },
+  { path: 'lazy-loading', component: LazyLoadingComponent },
+  { path: 'canvas-game', component: CanvasGameComponent },
 ];
 
 
 @NgModule({
-  declarations: [MainComponent],
+  declarations: [MainComponent, ImageComponent, LazyLoadingComponent, CanvasGameComponent],
   imports: [
+    CommonModule,
+    FlexLayoutModule,
+    ReactiveFormsModule,
     RouterModule.forChild(routes),
-    CommonModule
+    FormsModule,
+    MatSliderModule,
   ]
 })
 export class PagesModule { }

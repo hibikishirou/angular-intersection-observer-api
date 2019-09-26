@@ -1,0 +1,31 @@
+<div>
+  <input #imageInput type="file" (change)="checkImage($event)">
+</div>
+<form name="frm" id="frm" [formGroup]="frm" fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="30px">
+  <div fxLayout="column" fxFlex="25">
+    <label>Red {{frm.value.red}}</label>
+    <mat-slider formControlName="red" class="mat-slider" min="0" max="255" step="0.1"></mat-slider>
+  </div>
+  <div fxLayout="column" fxFlex="25">
+    <label>Green {{frm.value.green}}</label>
+    <mat-slider formControlName="green" class="mat-slider" min="0" max="255" step="0.1"></mat-slider>
+  </div>
+  <div fxLayout="column" fxFlex="25">
+    <label>Blue {{frm.value.blue}}</label>
+    <mat-slider formControlName="blue" class="mat-slider" min="0" max="255" step="0.1"></mat-slider>
+  </div>
+  <div fxLayout="column" fxFlex="25">
+    <label>Alpha {{frm.value.alpha?'-' + frm.value.alpha : 0 }}</label>
+    <mat-slider formControlName="alpha" class="mat-slider" min="0" max="255" step="0.1"></mat-slider>
+  </div>
+</form>
+<div fxLayout="row" fxLayoutAlign="start start" fxLayoutGap="30px">
+  <div fxFlex="50" class="image-container">
+    <h1>RAW</h1>
+    <canvas #canvas></canvas>
+  </div>
+  <div fxFlex="50" class="image-container">
+    <h1>CONVERTED</h1>
+    <canvas #canvas2></canvas>
+  </div>
+</div>
