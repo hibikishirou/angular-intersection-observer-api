@@ -23,7 +23,7 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
   };
   w = 1200;
   h = 600;
-  step = 100;
+  step = 30;
   position = {
     x: 100,
     y: 300
@@ -38,16 +38,14 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
   }
   ngAfterViewInit() {
     this.getCtx();
-    this.run();
+    this.restart();
   }
   run() {
     this.action.moving = setInterval(() => {
       this.moveFoward();
+      this.moveDown(1);
       this.redraw();
     }, 5);
-    this.action.droping = setInterval(() => {
-      this.moveDown(this.step);
-    }, 500);
   }
   redraw() {
     this.makeBody(this.position);
@@ -58,6 +56,8 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
     this.ctx.clearRect(0, 0, this.w, this.h);
   }
   restart() {
+    this.isOver = false;
+    this.started = false;
     this.position.x = this.begin.x;
     this.position.y = this.begin.y;
     this.clearBody();
@@ -66,15 +66,16 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
   over() {
     clearInterval(this.action.moving);
     clearInterval(this.action.droping);
-    clearInterval(this.action.fall);
-    clearInterval(this.action.jump);
+    // clearInterval(this.action.fall);
+    // clearInterval(this.action.jump);
     this.isOver = true;
   }
   moveFoward() {
     this.position.x += 1;
     this.clearBody();
     if (this.position.x === this.w) {
-      this.restart();
+      // this.restart();
+      this.over();
     }
   }
   moveUp(range) {
@@ -103,16 +104,13 @@ export class CanvasGameComponent implements OnInit, AfterViewInit {
     }
   }
   click(e) {
-    if (this.isOver && this.started) {
-      this.started = false;
-      this.isOver = false;
+    if (this.isOver) {
       this.restart();
       return;
     }
     if (!this.started) {
       this.run();
       this.started = true;
-      this.isOver = false;
       return;
     }
     this.moveUp(this.step);

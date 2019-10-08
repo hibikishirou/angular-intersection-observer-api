@@ -1,0 +1,13 @@
+<textarea [(ngModel)]="inputData"></textarea>
+<button (click)="crawler()">Question</button>
+<button (click)="answer()">Answer</button>
+<div class="result">
+  <div *ngFor="let question of questionList; let i = index">
+    <span>{{i + 1}}.<span [innerHTML]="question.quest"></span></span>
+    <div>A. <span [innerHTML]="question.answerA"></span></div>
+    <div>B. <span [innerHTML]="question.answerB"></span></div>
+    <div>C. <span [innerHTML]="question.answerC"></span></div>
+    <div>D. <span [innerHTML]="question.answerD"></span></div>
+    <span *ngIf="answerList.length">Answer: {{answerList[i]}}</span>
+  </div>
+</div>
