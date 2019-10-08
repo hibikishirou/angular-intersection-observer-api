@@ -1,0 +1,27 @@
+<h1 mat-dialog-title>Create new Question</h1>
+<div mat-dialog-content>
+  <form [formGroup]="frm" fxLayout="column">
+    <mat-form-field fxLayout="column">
+      <input matInput formControlName="question" placeholder="Question">
+    </mat-form-field>
+    <mat-form-field fxLayout="column">
+      <input matInput formControlName="a" placeholder="A">
+    </mat-form-field>
+    <mat-form-field fxLayout="column">
+      <input matInput formControlName="b" placeholder="B">
+    </mat-form-field>
+    <mat-form-field fxLayout="column">
+      <input matInput formControlName="c" placeholder="C">
+    </mat-form-field>
+    <mat-form-field fxLayout="column">
+      <input matInput formControlName="d" placeholder="D">
+    </mat-form-field>
+    <mat-form-field fxLayout="column">
+      <input matInput formControlName="right" placeholder="Right">
+    </mat-form-field>
+  </form>
+</div>
+<div mat-dialog-actions>
+  <button mat-raised-button [mat-dialog-close] cdkFocusInitial>Cancel</button>
+  <button mat-raised-button color="primary" (click)="save()">Save</button>
+</div>

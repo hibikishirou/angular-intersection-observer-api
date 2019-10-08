@@ -16,6 +16,7 @@ const routes: Routes = [
   { path: 'lazy-loading', component: LazyLoadingComponent },
   { path: 'canvas-game', component: CanvasGameComponent },
   { path: 'crawl-question', component: CrawlDataComponent },
+  { path: 'question-bank', loadChildren: './question-bank/question-bank.module#QuestionBankModule' }
 ];
 
 

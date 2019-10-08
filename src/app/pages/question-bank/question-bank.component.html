@@ -1,0 +1,11 @@
+<button mat-raised-button color="primary" (click)="createQuestion()">Create</button>
+<div class="result">
+  <div *ngFor="let question of questionList; let i = index">
+    <span>{{i + 1}}.<span [innerHTML]="question.question"></span></span>
+    <div>A. <span [innerHTML]="question.a"></span></div>
+    <div>B. <span [innerHTML]="question.b"></span></div>
+    <div>C. <span [innerHTML]="question.c"></span></div>
+    <div>D. <span [innerHTML]="question.d"></span></div>
+    <span>Answer: {{question.right}}</span>
+  </div>
+</div>
