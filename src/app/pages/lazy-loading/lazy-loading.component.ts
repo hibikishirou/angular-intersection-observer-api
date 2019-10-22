@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChildren, ViewChild, ElementRef, QueryList, AfterViewInit } from '@angular/core';
 import { Observable, concat, defer, of, fromEvent, combineLatest } from 'rxjs';
 import { map, flatMap, distinctUntilChanged } from 'rxjs/operators';
+import { ThrowStmt } from '@angular/compiler';
 
 @Component({
   selector: 'app-lazy-loading',
@@ -40,13 +41,35 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
       url: './assets/music/Khong Sao Ma_ Em Day Roi - Suni Ha Linh_.mp3',
       visible: false,
       play: false
+    },
+    {
+      url: './assets/music/Con Mo Bang Gia - Bang Kieu.mp3',
+      visible: false,
+      play: false
+    }, {
+      url: './assets/music/Nuoc Mat Em Lau Bang Tinh Yeu Moi - Da L.mp3',
+      visible: false,
+      play: false
+    }, {
+      url: './assets/music/Song Gio Jack_ K-ICM_ - Jack_K-ICM.mp3',
+      visible: false,
+      play: false
+    }, {
+      url: './assets/music/Yeu Em Rat Nhieu - Hoang Ton.mp3',
+      visible: false,
+      play: false
     }
   ];
+
+  playingURL = './assets/music/Khong Sao Ma_ Em Day Roi - Suni Ha Linh_.mp3';
+  playingNumber = 0;
+
   @ViewChildren('imgContainer') imgContainer: QueryList<ElementRef>;
   @ViewChild('audioContainer') audioContainer: ElementRef;
   @ViewChild('loadMore') loadMore: ElementRef;
   intersectionObserver: IntersectionObserver;
   private pageVisible$: Observable<boolean>;
+  private musicAutoplay$: any;
   private playing = false;
   constructor() { }
 
@@ -67,14 +90,29 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
         }
       }
     });
+    this.musicAutoplay$ = concat(
+      fromEvent(this.audioContainer.nativeElement, 'ended')
+    );
+    this.musicAutoplay$.subscribe(() => {
+      this.playNext();
+    });
   }
-
   ngAfterViewInit() {
     this.intersectionObserver = new IntersectionObserver(entries => {
       this.checkForIntersection(entries);
     });
     this.intersectionObserver.observe(this.loadMore.nativeElement);
     this.intersectionObserver.observe(this.audioContainer.nativeElement);
+  }
+  playNext() {
+    if (this.playingNumber === this.AUDIOLIST.length - 1) {
+      this.playingNumber = 0;
+    } else {
+      this.playingNumber += 1;
+    }
+    this.playingURL = this.AUDIOLIST[this.playingNumber].url;
+    this.audioContainer.nativeElement.load();
+    this.audioContainer.nativeElement.play();
   }
 
   private checkForIntersection = (entries: Array<IntersectionObserverEntry>) => {
