@@ -10,6 +10,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CanvasGameComponent } from './canvas-game/canvas-game.component';
 import { CrawlDataComponent } from './crawl-data/crawl-data.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 const routes: Routes = [
   { path: '', component: MainComponent },
   { path: 'image', component: ImageComponent },
@@ -29,6 +31,8 @@ const routes: Routes = [
     ReactiveFormsModule,
     RouterModule.forChild(routes),
     FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatSliderModule,
   ]
 })

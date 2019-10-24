@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChildren, ViewChild, ElementRef, QueryList, Afte
 import { Observable, concat, defer, of, fromEvent, combineLatest } from 'rxjs';
 import { map, flatMap, distinctUntilChanged } from 'rxjs/operators';
 import { ThrowStmt } from '@angular/compiler';
+import { DomSanitizer } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-lazy-loading',
@@ -36,6 +37,11 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
     },
   ];
 
+  VIDEOLIST = [
+    { url: './assets/video/videoplayback.mp4' },
+    { url: 'https://drive.google.com/open?id=0BwXvXdl3lpTueDJJS0trSTQ1b0U' }
+  ];
+
   AUDIOLIST = [
     {
       url: './assets/music/Khong Sao Ma_ Em Day Roi - Suni Ha Linh_.mp3',
@@ -60,18 +66,19 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
       play: false
     }
   ];
-
+  playVideo = './assets/video/videoplayback.mp4';
   playingURL = './assets/music/Khong Sao Ma_ Em Day Roi - Suni Ha Linh_.mp3';
   playingNumber = 0;
 
   @ViewChildren('imgContainer') imgContainer: QueryList<ElementRef>;
   @ViewChild('audioContainer') audioContainer: ElementRef;
+  @ViewChild('videoContainer') videoContainer: ElementRef;
   @ViewChild('loadMore') loadMore: ElementRef;
   intersectionObserver: IntersectionObserver;
   private pageVisible$: Observable<boolean>;
   private musicAutoplay$: any;
   private playing = false;
-  constructor() { }
+  constructor(private sanitizer: DomSanitizer) { }
 
   ngOnInit() {
     this.pageVisible$ = concat(
@@ -103,6 +110,7 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
     });
     this.intersectionObserver.observe(this.loadMore.nativeElement);
     this.intersectionObserver.observe(this.audioContainer.nativeElement);
+    this.intersectionObserver.observe(this.videoContainer.nativeElement);
   }
   playNext() {
     if (this.playingNumber === this.AUDIOLIST.length - 1) {
@@ -139,6 +147,18 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
             }
           }
           break;
+        case 'VIDEO':
+          if (this.videoContainer) {
+            if (entry.intersectionRatio === 0) {
+              this.videoContainer.nativeElement.pause();
+              this.playing = false;
+            }
+            if (entry.intersectionRatio > 0) {
+              this.videoContainer.nativeElement.play();
+              this.playing = true;
+            }
+          }
+          break;
       }
 
     });
@@ -148,5 +168,9 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
     return this.IMGLIST.reduce((result, item) => {
       return item.visible ? result + 1 : result;
     }, 0);
+  }
+
+  securityTrustUrl(url) {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 }
