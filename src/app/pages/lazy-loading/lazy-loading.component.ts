@@ -74,6 +74,7 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
   @ViewChild('audioContainer') audioContainer: ElementRef;
   @ViewChild('videoContainer') videoContainer: ElementRef;
   @ViewChild('loadMore') loadMore: ElementRef;
+  @ViewChild('viewPortContainer') viewPortContainer: ElementRef;
   intersectionObserver: IntersectionObserver;
   private pageVisible$: Observable<boolean>;
   private musicAutoplay$: any;
@@ -105,9 +106,14 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
     });
   }
   ngAfterViewInit() {
+    const options = {
+      root: this.viewPortContainer.nativeElement,
+      rootMargin: '1000px',
+      threshold: 1.0
+    };
     this.intersectionObserver = new IntersectionObserver(entries => {
       this.checkForIntersection(entries);
-    });
+    }, options);
     this.intersectionObserver.observe(this.loadMore.nativeElement);
     this.intersectionObserver.observe(this.audioContainer.nativeElement);
     this.intersectionObserver.observe(this.videoContainer.nativeElement);
@@ -128,6 +134,7 @@ export class LazyLoadingComponent implements OnInit, AfterViewInit {
       const tag = entry.target.tagName;
       switch (tag) {
         case 'DIV':
+          console.log(entry);
           if (entry.intersectionRatio > 0) {
             const result = this.IMGLIST.find(item => !item.visible);
             if (result) {
